@@ -7,6 +7,23 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
+// Function to compile and run C++ code
+function compileAndRun(codeFilename, input) {
+    try {
+        // Compile the code
+        const compileCommand = `g++ .\\${codeFilename} -o ${codeFilename.replace('.cpp', '')}.exe`;
+        execSync(compileCommand);
+        // Run the compiled executable
+        const runCommand = `.\\${codeFilename.replace('.cpp', '')}.exe`;
+        const output = execSync(runCommand, { input, encoding: 'utf-8' });
+        return output;
+    } catch (error) {
+        console.log("caught up in error");
+        throw new Error("Failed to run the given C++ Code");
+    }
+}
+
+
 // Main function
 function main() {
 
