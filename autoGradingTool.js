@@ -7,6 +7,7 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
+
 // Function to compile and run C++ code
 function compileAndRun(codeFilename, input) {
     try {
@@ -23,6 +24,15 @@ function compileAndRun(codeFilename, input) {
     }
 }
 
+// Function to grade an exercise
+function gradeExercise(exerciseNumber, studentCodeFilename) {
+    const inputFilename = `exercise${exerciseNumber}_input.txt`;
+    const expectedOutputFilename = `exercise${exerciseNumber}_output.txt`;
+
+    const studentOutput = compileAndRun(studentCodeFilename, inputFilename);
+    const expectedOutput = fs.readFileSync(expectedOutputFilename, 'utf-8');
+    return studentOutput.trim() === expectedOutput.trim();
+}
 
 // Main function
 function main() {
