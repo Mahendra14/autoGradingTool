@@ -7,7 +7,6 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
-
 // Function to compile and run C++ code
 function compileAndRun(codeFilename, input) {
     try {
@@ -26,12 +25,34 @@ function compileAndRun(codeFilename, input) {
 
 // Function to grade an exercise
 function gradeExercise(exerciseNumber, studentCodeFilename) {
-    const inputFilename = `exercise${exerciseNumber}_input.txt`;
-    const expectedOutputFilename = `exercise${exerciseNumber}_output.txt`;
+    // const inputFilename = `exercise${exerciseNumber}_input.txt`;
+    // const expectedOutputFilename = `exercise${exerciseNumber}_output.txt`;
 
-    const studentOutput = compileAndRun(studentCodeFilename, inputFilename);
-    const expectedOutput = fs.readFileSync(expectedOutputFilename, 'utf-8');
-    return studentOutput.trim() === expectedOutput.trim();
+    // const studentOutput = compileAndRun(studentCodeFilename, inputFilename);
+    // const expectedOutput = fs.readFileSync(expectedOutputFilename, 'utf-8');
+    // return studentOutput.trim() === expectedOutput.trim();
+    const testCases = fs.readFileSync(`exercise${exerciseNumber}_input.txt`, 'utf-8').split('\n');
+    let allTestsPassed = true;
+    let exerciseMarks = 1;
+
+    try {
+        for (let testCaseNumber = 0; testCaseNumber < testCases.length; testCaseNumber++) {
+            const testCase = testCases[testCaseNumber].trim().split(' ');
+            const input = `${testCase[0]}\n${testCase[1]}`;
+            const studentOutput = compileAndRun(studentCodeFilename, input);
+            const expectedOutput = testCase[2];
+            const testPassed = (studentOutput.trim() === expectedOutput.trim());
+            if (!testPassed) {
+                console.log(`Exercise ${exerciseNumber}, Test Case ${testCaseNumber + 1}: Failed`);
+            } else {
+                console.log(`Exercise ${exerciseNumber}, Test Case ${testCaseNumber + 1}: Passed`);
+                exerciseMarks++;
+            }
+        }
+    } catch (error) {
+        return error;
+    }
+    return exerciseMarks;
 }
 
 // Main function
