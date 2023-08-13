@@ -25,12 +25,6 @@ function compileAndRun(codeFilename, input) {
 
 // Function to grade an exercise
 function gradeExercise(exerciseNumber, studentCodeFilename) {
-    // const inputFilename = `exercise${exerciseNumber}_input.txt`;
-    // const expectedOutputFilename = `exercise${exerciseNumber}_output.txt`;
-
-    // const studentOutput = compileAndRun(studentCodeFilename, inputFilename);
-    // const expectedOutput = fs.readFileSync(expectedOutputFilename, 'utf-8');
-    // return studentOutput.trim() === expectedOutput.trim();
     const testCases = fs.readFileSync(`./Example/exercise${exerciseNumber}_input.txt`, 'utf-8').split('\n');
     let allTestsPassed = true;
     let exerciseMarks = 1;
