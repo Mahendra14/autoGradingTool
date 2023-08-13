@@ -14,7 +14,7 @@ function compileAndRun(codeFilename, input) {
         const compileCommand = `g++ .\\${codeFilename} -o ${codeFilename.replace('.cpp', '')}.exe`;
         execSync(compileCommand);
         // Run the compiled executable
-        const runCommand = `.\\${codeFilename.replace('.cpp', '')}.exe`;
+        const runCommand = `.\\${codeFilename.split("\/")[1]}\\${codeFilename.split("\/")[2].replace('.cpp', '')}.exe`;
         const output = execSync(runCommand, { input, encoding: 'utf-8' });
         return output;
     } catch (error) {
@@ -26,6 +26,7 @@ function compileAndRun(codeFilename, input) {
 // Function to grade an exercise
 function gradeExercise(exerciseNumber, studentCodeFilename) {
     const testCases = fs.readFileSync(`./Example/exercise${exerciseNumber}_input.txt`, 'utf-8').split('\n');
+    const expectedOutputs = fs.readFileSync(`./Example/exercise${exerciseNumber}_output.txt`, 'utf-8').split('\n');
     let allTestsPassed = true;
     let exerciseMarks = 1;
 
@@ -34,8 +35,8 @@ function gradeExercise(exerciseNumber, studentCodeFilename) {
             const testCase = testCases[testCaseNumber].trim().split(' ');
             const input = `${testCase[0]}\n${testCase[1]}`;
             const studentOutput = compileAndRun(studentCodeFilename, input);
-            const expectedOutput = testCase[2];
-            const testPassed = (studentOutput.trim() === expectedOutput.trim());
+            const expOutput = expectedOutputs[testCaseNumber].trim();
+            const testPassed = (studentOutput.trim() === expOutput.trim());
             if (!testPassed) {
                 console.log(`Exercise ${exerciseNumber}, Test Case ${testCaseNumber + 1}: Failed`);
             } else {
