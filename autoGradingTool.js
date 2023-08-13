@@ -31,7 +31,7 @@ function gradeExercise(exerciseNumber, studentCodeFilename) {
     // const studentOutput = compileAndRun(studentCodeFilename, inputFilename);
     // const expectedOutput = fs.readFileSync(expectedOutputFilename, 'utf-8');
     // return studentOutput.trim() === expectedOutput.trim();
-    const testCases = fs.readFileSync(`exercise${exerciseNumber}_input.txt`, 'utf-8').split('\n');
+    const testCases = fs.readFileSync(`./Example/exercise${exerciseNumber}_input.txt`, 'utf-8').split('\n');
     let allTestsPassed = true;
     let exerciseMarks = 1;
 
@@ -61,10 +61,13 @@ function main() {
     try {
         rl.question("Enter the number of exercises: ", (numExercises) => {
             numExercises = parseInt(numExercises, 10);
-            const outputFile = 'grading_results.txt'; // Name of the output file
+            // Create a new folder for the exercise results
+            const exerciseResultsFolder = `results`;
+            fs.mkdirSync(exerciseResultsFolder, { recursive: true });
+            const outputFile = `${exerciseResultsFolder}/grading_results.txt`; // Name of the output file
             let exerciseOutput = ''; // To store exercise grading output
             for (let exerciseNumber = 1; exerciseNumber <= numExercises; exerciseNumber++) {
-                const studentCodeFilename = `exercise${exerciseNumber}_student.cpp`;
+                const studentCodeFilename = `./Example/exercise${exerciseNumber}_student.cpp`;
 
                 exerciseOutput += `Grading Exercise ${exerciseNumber}...\n`;
                 console.log(`Grading Exercise ${exerciseNumber}...`);
