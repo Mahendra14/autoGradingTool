@@ -7,13 +7,11 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
-// Function to compile and run C++ code
+
 function compileAndRun(codeFilename, input) {
     try {
-        // Compile the code
         const compileCommand = `g++ .\\${codeFilename} -o ${codeFilename.replace('.cpp', '')}.exe`;
         execSync(compileCommand);
-        // Run the compiled executable
         const runCommand = `.\\${codeFilename.split("\/")[1]}\\${codeFilename.split("\/")[2].replace('.cpp', '')}.exe`;
         const output = execSync(runCommand, { input, encoding: 'utf-8' });
         return output;
@@ -23,10 +21,10 @@ function compileAndRun(codeFilename, input) {
     }
 }
 
-// Function to grade an exercise
-function gradeExercise(exerciseNumber, studentCodeFilename) {
-    const testCases = fs.readFileSync(`./Example/exercise${exerciseNumber}_input.txt`, 'utf-8').split('\n');
-    const expectedOutputs = fs.readFileSync(`./Example/exercise${exerciseNumber}_output.txt`, 'utf-8').split('\n');
+
+function gradeExercise(exerciseNumber, studentCodeFilename, studentFolderName) {
+    const testCases = fs.readFileSync(`./${studentFolderName}/exercise${exerciseNumber}_input.txt`, 'utf-8').split('\n');
+    const expectedOutputs = fs.readFileSync(`./${studentFolderName}/exercise${exerciseNumber}_output.txt`, 'utf-8').split('\n');
     let allTestsPassed = true;
     let exerciseMarks = 1;
 
@@ -50,36 +48,69 @@ function gradeExercise(exerciseNumber, studentCodeFilename) {
     return exerciseMarks;
 }
 
-// Main function
+
 function main() {
 
     try {
-        rl.question("Enter the number of exercises: ", (numExercises) => {
+        rl.question("Enter the number of exercises: ", async (numExercises) => {
             numExercises = parseInt(numExercises, 10);
-            // Create a new folder for the exercise results
             const exerciseResultsFolder = `results`;
             fs.mkdirSync(exerciseResultsFolder, { recursive: true });
-            const outputFile = `${exerciseResultsFolder}/grading_results.txt`; // Name of the output file
-            let exerciseOutput = ''; // To store exercise grading output
+            let exerciseOutput = ''; 
+            const firstName = await new Promise((resolve) => {
+                rl.question("Enter your first name: ", (input) => {
+                    resolve(input);
+                });
+            });
+
+            const lastName = await new Promise((resolve) => {
+                rl.question("Enter your last name: ", (input) => {
+                    resolve(input);
+                });
+            });
+
+            const studentID = await new Promise((resolve) => {
+                rl.question("Enter youExamplegradinr ID: ", (input) => {
+                    resolve(input);
+                });
+            });
+            let folderName = `${firstName}_${lastName}_${studentID}`;
             for (let exerciseNumber = 1; exerciseNumber <= numExercises; exerciseNumber++) {
-                const studentCodeFilename = `./Example/exercise${exerciseNumber}_student.cpp`;
+                if (!fs.existsSync(folderName)) {
+                    folderName = "Example";
+                }
+                const studentCodeFilename = `./${folderName}/exercise${exerciseNumber}_student.cpp`;
 
                 exerciseOutput += `Grading Exercise ${exerciseNumber}...\n`;
                 console.log(`Grading Exercise ${exerciseNumber}...`);
 
                 if (fs.existsSync(studentCodeFilename)) {
                     console.log("Started grading");
-                    let marks = gradeExercise(exerciseNumber, studentCodeFilename);
+                    let marks = gradeExercise(exerciseNumber, studentCodeFilename, folderName);
                     if (Number.isInteger(marks)) {
                         exerciseOutput += `Exercise ${exerciseNumber}: Number of Test Cases Passed are : ${marks - 1} \n`;
-                    } else{
+                    } else {
                         exerciseOutput += `Exercise ${exerciseNumber}: ${marks} \n`
                     }
                 } else {
                     exerciseOutput += `No submission for Exercise ${exerciseNumber} \n`;
                 }
                 if (exerciseNumber === numExercises) {
-                    fs.writeFileSync(outputFile, exerciseOutput);
+                    let outputFile = `${exerciseResultsFolder}/${folderName}/grading_results.txt`; // Name of the output file
+                    if (folderName === "Example") {
+                        outputFile = `${exerciseResultsFolder}/grading_results.txt`
+                    }
+                    if (fs.existsSync(outputFile)) {
+                        fs.writeFileSync(outputFile, exerciseOutput);
+                    } else {
+                        try {
+                            fs.mkdirSync(`${exerciseResultsFolder}/${folderName}`);
+                            console.log(`Folder "${folderName}" created successfully.`);
+                        } catch (error) {
+                            console.error(`An error occurred: ${error.message}`);
+                        }
+                        fs.writeFileSync(outputFile, exerciseOutput);
+                    }
                     rl.close();
                 }
             }
