@@ -1,6 +1,6 @@
 # Running Multiple Coding Exercises with Docker
 
-To run multiple coding exercises without creating a separate Docker image for each exercise, follow the below approach:
+To run multiple coding exercises without creating a separate Docker image for each exercise, will follow the below approach:
 
 ## Execute the Code snippets Dynamically
 
